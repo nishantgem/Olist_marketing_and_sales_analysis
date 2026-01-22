@@ -40,7 +40,12 @@ models:
     +materialized: view
 
     olist_project:
+      +materialized: view
+
       staging:
+        +materialized: view
+
         olist:
           +materialized: view
+
 
