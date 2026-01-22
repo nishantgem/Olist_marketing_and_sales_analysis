@@ -14,8 +14,10 @@ final as (
         order_status,
         order_purchase_ts,
         order_approved_ts,
-        order_delivered_carrier_ts,
-        order_delivered_customer_ts,
+
+        -- correct names from staging → intermediate
+        order_carrier_delivered_ts,
+        order_customer_delivered_ts,
         order_estimated_delivery_ts,
 
         delivery_days
