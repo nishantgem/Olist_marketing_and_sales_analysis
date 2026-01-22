@@ -1,0 +1,123 @@
+version: 2
+
+models:
+
+  # -------------------------
+  # DIMENSIONS
+  # -------------------------
+
+  - name: dim_customers
+    description: "Customer dimension with standardized customer attributes"
+    columns:
+      - name: customer_id
+        tests:
+          - not_null
+          - unique
+      - name: customer_unique_id
+        description: "Unique identifier for deduplicating customers"
+
+  - name: dim_sellers
+    description: "Seller dimension with standardized seller attributes"
+    columns:
+      - name: seller_id
+        tests:
+          - not_null
+          - unique
+
+  - name: dim_products
+    description: "Product dimension with cleaned and standardized product attributes"
+    columns:
+      - name: product_id
+        tests:
+          - not_null
+          - unique
+      - name: product_category_name
+        description: "Normalized product category"
+
+  # -------------------------
+  # FACT TABLES
+  # -------------------------
+
+  - name: fact_orders
+    description: "Fact table containing enriched order-level data"
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+          - unique
+      - name: customer_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_customers')
+              field: customer_id
+
+  - name: fact_order_items
+    description: "Fact table containing enriched order item-level data"
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('fact_orders')
+              field: order_id
+      - name: product_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_products')
+              field: product_id
+      - name: seller_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_sellers')
+              field: seller_id
+
+  - name: fact_mqls
+    description: "Fact table representing marketing qualified leads"
+    columns:
+      - name: mql_id
+        tests:
+          - not_null
+          - unique
+
+  - name: fact_closed_deals
+    description: "Fact table representing closed/won deals enriched with MQL and seller attributes"
+    columns:
+      - name: mql_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('fact_mqls')
+              field: mql_id
+      - name: seller_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_sellers')
+              field: seller_id
+
+  # -------------------------
+  # SALES FUNNEL
+  # -------------------------
+
+  - name: sales_funnel
+    description: "Unified commercial funnel combining MQLs, closed deals, orders, and order items"
+    columns:
+      - name: mql_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('fact_mqls')
+              field: mql_id
+      - name: order_id
+        tests:
+          - relationships:
+              to: ref('fact_orders')
+              field: order_id
+      - name: product_id
+        tests:
+          - relationships:
+              to: ref('dim_products')
+              field: product_id

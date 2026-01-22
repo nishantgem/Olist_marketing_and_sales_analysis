@@ -1,0 +1,84 @@
+version: 2
+
+models:
+
+  - name: int_orders
+    description: "Enriched orders with customer attributes and delivery metrics"
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+          - unique
+      - name: customer_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('int_customers')
+              field: customer_id
+      - name: delivery_days
+        description: "Number of days between purchase and delivery"
+
+  - name: int_order_items
+    description: "Order items enriched with product and seller attributes"
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('int_orders')
+              field: order_id
+      - name: order_item_id
+        tests:
+          - not_null
+      - name: product_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_products')
+              field: product_id
+      - name: seller_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('int_sellers')
+              field: seller_id
+
+  - name: int_customers
+    description: "Cleaned customer dimension inputs"
+    columns:
+      - name: customer_id
+        tests:
+          - not_null
+          - unique
+
+  - name: int_sellers
+    description: "Cleaned seller dimension inputs"
+    columns:
+      - name: seller_id
+        tests:
+          - not_null
+          - unique
+
+  - name: int_mql
+    description: "Marketing qualified leads with standardized attributes"
+    columns:
+      - name: mql_id
+        tests:
+          - not_null
+          - unique
+
+  - name: int_closed_deals
+    description: "Closed deals enriched with MQL and seller attributes"
+    columns:
+      - name: mql_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('int_mql')
+              field: mql_id
+      - name: seller_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('int_sellers')
+              field: seller_id
