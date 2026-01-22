@@ -18,7 +18,7 @@ order_items as (
     from {{ ref('fact_order_items') }}
 ),
 
--- join MQL → Closed Deal
+-- MQL → Closed Deal
 mql_to_deal as (
     select
         mql.mql_id,
@@ -44,7 +44,7 @@ mql_to_deal as (
     left join closed_deals cd using (mql_id)
 ),
 
--- join Closed Deal → Orders
+-- Closed Deal → Orders
 deal_to_orders as (
     select
         m.*,
@@ -55,22 +55,24 @@ deal_to_orders as (
         o.customer_state,
         o.order_status,
         o.order_purchase_ts,
-        o.order_delivered_customer_ts,
+        o.order_approved_ts,
+        o.order_carrier_delivered_ts,
+        o.order_customer_delivered_ts,
+        o.order_estimated_delivery_ts,
         o.delivery_days
     from mql_to_deal m
     left join orders o
-        on m.seller_id = o.customer_id  -- Olist dataset links seller to customer in closed deals
+        on m.seller_id = o.customer_id
 ),
 
--- join Orders → Order Items
+-- Orders → Order Items
 final as (
     select
         d.*,
         oi.order_item_id,
         oi.product_id,
         oi.price,
-        oi.freight_value,
-        oi.product_category_name
+        oi.freight_value
     from deal_to_orders d
     left join order_items oi using (order_id)
 )
