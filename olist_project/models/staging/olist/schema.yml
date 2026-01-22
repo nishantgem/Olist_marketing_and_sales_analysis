@@ -1,0 +1,43 @@
+version: 2
+
+models:
+  - name: stg_orders
+    description: "Staging model for Olist orders data"
+    columns:
+      - name: order_id
+        description: "Unique identifier for each order"
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: "ID of the customer who placed the order"
+      - name: order_status
+        description: "Current status of the order"
+      - name: order_purchase_ts
+        description: "Timestamp when the order was placed"
+      - name: order_approved_ts
+        description: "Timestamp when the order was approved"
+      - name: order_carrier_delivered_ts
+        description: "Timestamp when the order was handed to the carrier"
+      - name: order_customer_delivered_ts
+        description: "Timestamp when the order was delivered to the customer"
+      - name: order_estimated_delivery_ts
+        description: "Estimated delivery timestamp for the order"
+
+  - name: stg_order_items
+    description: "Staging model for Olist order items data"
+    columns:
+      - name: order_id
+        description: "ID of the order this item belongs to"
+      - name: order_item_id
+        description: "Sequence number of the item in the order"
+      - name: product_id
+        description: "ID of the product ordered"
+      - name: seller_id
+        description: "ID of the seller supplying the product"
+      - name: shipping_limit_ts
+        description: "Timestamp by which the item should be shipped"
+      - name: price
+        description: "Price of the item"
+      - name: freight_value
+        description: "Shipping cost for the item"
