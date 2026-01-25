@@ -26,6 +26,7 @@ mql_to_deal as (
         mql.landing_page_id,
         mql.origin,
 
+        cd.customer_id,   -- ✔ correct source
         cd.seller_id,
         cd.sdr_id,
         cd.sr_id,
@@ -37,7 +38,6 @@ mql_to_deal as (
         cd.has_gtin,
         cd.average_stock,
         cd.business_type,
-
         cd.seller_city,
         cd.seller_state
     from mql
@@ -49,7 +49,6 @@ deal_to_orders as (
     select
         m.*,
         o.order_id,
-        o.customer_id,
         o.customer_unique_id,
         o.customer_city,
         o.customer_state,
@@ -62,7 +61,7 @@ deal_to_orders as (
         o.delivery_days
     from mql_to_deal m
     left join orders o
-        on m.seller_id = o.customer_id
+        on m.customer_id = o.customer_id   -- ✔ correct join
 ),
 
 -- Orders → Order Items
