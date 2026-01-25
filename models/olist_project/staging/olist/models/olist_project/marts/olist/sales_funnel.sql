@@ -18,7 +18,7 @@ order_items as (
     from {{ ref('fact_order_items') }}
 ),
 
--- MQL → Closed Deal
+-- 1. MQL → Closed Deal
 mql_to_deal as (
     select
         mql.mql_id,
@@ -26,7 +26,6 @@ mql_to_deal as (
         mql.landing_page_id,
         mql.origin,
 
-        cd.customer_id,   -- ✔ correct source
         cd.seller_id,
         cd.sdr_id,
         cd.sr_id,
@@ -44,11 +43,12 @@ mql_to_deal as (
     left join closed_deals cd using (mql_id)
 ),
 
--- Closed Deal → Orders
+-- 2. Closed Deal → Orders (via seller_id)
 deal_to_orders as (
     select
         m.*,
         o.order_id,
+        o.customer_id,
         o.customer_unique_id,
         o.customer_city,
         o.customer_state,
@@ -61,10 +61,10 @@ deal_to_orders as (
         o.delivery_days
     from mql_to_deal m
     left join orders o
-        on m.customer_id = o.customer_id   -- ✔ correct join
+        on m.seller_id = o.seller_id
 ),
 
--- Orders → Order Items
+-- 3. Orders → Order Items
 final as (
     select
         d.*,
