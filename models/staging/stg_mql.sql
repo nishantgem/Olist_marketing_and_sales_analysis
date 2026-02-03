@@ -11,7 +11,7 @@ renamed as (
         first_contact_date,
         landing_page_id,
         origin,
-        cast(created_at as timestamp) as created_at
+        cast(first_contact_date as timestamp) as first_contact_date
     from source
 )
 
