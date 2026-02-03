@@ -1,0 +1,125 @@
+version: 2
+
+models:
+  - name: stg_orders
+    description: "Cleaned and typed order-level data from Olist."
+    columns:
+      - name: order_id
+        tests: [not_null, unique]
+      - name: customer_id
+      - name: order_status
+      - name: order_purchase_timestamp
+      - name: order_approved_at
+      - name: order_delivered_carrier_date
+      - name: order_delivered_customer_date
+      - name: order_estimated_delivery_date
+
+  - name: stg_order_items
+    description: "Item-level details for each order."
+    columns:
+      - name: order_id
+        tests:
+          - relationships:
+              to: ref('stg_orders')
+              field: order_id
+      - name: order_item_id
+      - name: product_id
+      - name: seller_id
+      - name: shipping_limit_date
+      - name: price
+      - name: freight_value
+
+  - name: stg_order_payments
+    description: "Payment information for each order."
+    columns:
+      - name: order_id
+        tests:
+          - relationships:
+              to: ref('stg_orders')
+              field: order_id
+      - name: payment_type
+      - name: payment_installments
+      - name: payment_value
+
+  - name: stg_order_reviews
+    description: "Customer review scores and timestamps."
+    columns:
+      - name: review_id
+        tests: [unique, not_null]
+      - name: order_id
+        tests:
+          - relationships:
+              to: ref('stg_orders')
+              field: order_id
+      - name: review_score
+      - name: review_creation_date
+      - name: review_answer_timestamp
+
+  - name: stg_customers
+    description: "Customer demographic and location data."
+    columns:
+      - name: customer_id
+        tests: [unique, not_null]
+      - name: customer_unique_id
+      - name: customer_zip_code_prefix
+      - name: customer_city
+      - name: customer_state
+
+  - name: stg_sellers
+    description: "Seller demographic and location data."
+    columns:
+      - name: seller_id
+        tests: [unique, not_null]
+      - name: seller_zip_code_prefix
+      - name: seller_city
+      - name: seller_state
+
+  - name: stg_products
+    description: "Product catalog information."
+    columns:
+      - name: product_id
+        tests: [unique, not_null]
+      - name: product_category_name
+      - name: product_weight_g
+      - name: product_length_cm
+      - name: product_height_cm
+      - name: product_width_cm
+
+  - name: stg_geolocation
+    description: "Geolocation data for zip code prefixes."
+    columns:
+      - name: geolocation_zip_code_prefix
+      - name: geolocation_lat
+      - name: geolocation_lng
+      - name: geolocation_city
+      - name: geolocation_state
+
+  - name: stg_mql
+    description: "Marketing qualified lead data."
+    columns:
+      - name: mql_id
+        tests: [unique, not_null]
+      - name: first_contact_date
+      - name: landing_page_id
+      - name: origin
+      - name: created_at
+
+  - name: stg_closed_deals
+    description: "Closed deal information linked to MQLs."
+    columns:
+      - name: mql_id
+        tests:
+          - relationships:
+              to: ref('stg_mql')
+              field: mql_id
+      - name: seller_id
+      - name: sdr_id
+      - name: sr_id
+      - name: won_date
+      - name: business_segment
+      - name: lead_type
+      - name: lead_behaviour_profile
+      - name: has_company
+      - name: has_gtin
+      - name: average_stock
+      - name: business_type

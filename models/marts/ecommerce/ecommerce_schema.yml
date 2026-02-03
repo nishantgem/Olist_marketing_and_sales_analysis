@@ -1,0 +1,39 @@
+version: 2
+
+models:
+  - name: dbt_ecommerce_master
+    description: "Ecommerce master table combining orders, items, payments, customers, products, sellers, and reviews."
+    columns:
+      - name: order_id
+        tests: [not_null]
+      - name: customer_id
+      - name: order_status
+      - name: order_purchase_timestamp
+      - name: order_approved_at
+      - name: order_delivered_carrier_date
+      - name: order_delivered_customer_date
+      - name: order_estimated_delivery_date
+      - name: order_item_id
+      - name: product_id
+      - name: seller_id
+      - name: shipping_limit_date
+      - name: price
+      - name: freight_value
+      - name: payment_type
+      - name: payment_installments
+      - name: payment_value
+      - name: customer_unique_id
+      - name: customer_zip_code_prefix
+      - name: customer_city
+      - name: customer_state
+      - name: product_category_name
+      - name: product_weight_g
+      - name: product_length_cm
+      - name: product_height_cm
+      - name: product_width_cm
+      - name: seller_zip_code_prefix
+      - name: seller_city
+      - name: seller_state
+      - name: review_score
+      - name: review_creation_date
+      - name: review_answer_timestamp
